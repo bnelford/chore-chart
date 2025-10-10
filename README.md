@@ -16,3 +16,10 @@ This is a lightweight React page that helps you manage a monthly rotation of hou
 5. Use the display toggle to switch between the wall-style calendar (with Sunday shown as a day off) and the person-by-day table.
 6. Above the calendar you’ll find **Show/Hide Stats**, **Export PDF**, and **Print** controls—use them to reveal the sidebar, generate a PDF, or print the condensed layout (printing/export automatically switches to the compact table view).
 7. Click **Use Sample Data** to try the tool with example names and tasks.
+
+## License
+
+This project is released under a simple **Home-Use License** (see `LICENSE`). You are free to run,
+modify, and share the app for personal, non-commercial use in a home environment. Any commercial
+use—including deploying it inside a business or bundling it with a paid service—requires obtaining
+permission from the copyright holder.
