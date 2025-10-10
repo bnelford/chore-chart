@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nelford Monthly Chore Chart</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        background: #f6f7fb;
+        color: #1b1d25;
+      }
+
+      h1,
+      h2 {
+        margin: 0 0 0.5rem;
+        font-weight: 600;
+        color: #1b1d25;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      h2 {
+        font-size: 1.125rem;
+      }
+
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 4rem;
+        display: grid;
+        gap: 2rem;
+      }
+
+      section {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 18px 34px -22px rgba(34, 41, 57, 0.28);
+        padding: 1.75rem;
+      }
+
+      .inputs-grid {
+        display: grid;
+        gap: 1.5rem;
+      }
+
+      .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      textarea {
+        border: 1px solid #cfd3e2;
+        border-radius: 8px;
+        padding: 0.75rem;
+        font: inherit;
+        resize: vertical;
+        min-height: 120px;
+      }
+
+      input[type="month"],
+      input[type="date"],
+      select {
+        border: 1px solid #cfd3e2;
+        border-radius: 8px;
+        padding: 0.65rem 0.75rem;
+        font: inherit;
+      }
+
+      textarea:focus,
+      input[type="month"]:focus,
+      input[type="date"]:focus,
+      select:focus {
+        outline: 2px solid #4f46e5;
+        border-color: transparent;
+      }
+
+      .helper {
+        color: #5f6a86;
+        font-size: 0.85rem;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .controls-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+
+      .view-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .view-toggle span {
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+
+      .view-toggle label {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-weight: 500;
+        font-size: 0.9rem;
+        color: #273057;
+      }
+
+      .view-toggle input {
+        accent-color: #4f46e5;
+      }
+
+      button {
+        border: none;
+        border-radius: 8px;
+        padding: 0.65rem 1.1rem;
+        font: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .primary {
+        background: #4f46e5;
+        color: #fff;
+      }
+
+      .secondary {
+        background: #e9ecf6;
+        color: #1f2544;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px -12px rgba(31, 37, 68, 0.5);
+      }
+
+      .chart-wrapper {
+        overflow-x: auto;
+      }
+
+      .empty {
+        padding: 1.5rem;
+        text-align: center;
+        color: #5f6a86;
+      }
+
+      .summary {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        font-size: 0.95rem;
+        margin-top: 1rem;
+        color: #273057;
+      }
+
+      .summary strong {
+        font-weight: 600;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        line-height: 1.2;
+        border: 1px solid rgba(17, 24, 39, 0.12);
+      }
+
+      .assignment-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+      }
+
+      .month-title {
+        margin: 0;
+        font-size: 2.05rem;
+        font-weight: 700;
+        color: #1b1d25;
+      }
+
+      .month-nav {
+        border: none;
+        background: transparent;
+        font-size: 1.65rem;
+        color: #5b627f;
+        cursor: pointer;
+        padding: 0.1rem 0.4rem;
+        transition: color 0.15s ease;
+      }
+
+      .month-nav:hover {
+        color: #1f2544;
+      }
+
+      .chart-toolbar__controls {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .section-content {
+        display: flex;
+        gap: 1.75rem;
+        align-items: flex-start;
+      }
+
+      .print-layout-active .section-content {
+        flex-direction: column;
+        gap: 1.1rem;
+      }
+
+      .chart-content {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .print-layout-active .chart-content {
+        gap: 0.85rem;
+      }
+
+      .stats-panel {
+        width: min(320px, 30%);
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+
+      .stats-card {
+        background: #f8f9ff;
+        border: 1px solid #dfe3f4;
+        border-radius: 12px;
+        padding: 1.1rem 1.15rem;
+        display: grid;
+        gap: 0.7rem;
+      }
+
+      .stats-card h3 {
+        margin: 0;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #4a4f6a;
+      }
+
+      .stats-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 0.45rem;
+        font-size: 0.9rem;
+        color: #273057;
+      }
+
+      .stats-list strong {
+        font-weight: 700;
+      }
+
+      .person-summary-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.88rem;
+      }
+
+      .person-summary-table th,
+      .person-summary-table td {
+        border: 1px solid #d9deeb;
+        padding: 0.55rem 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .person-summary-table th {
+        background: #eef1ff;
+        font-weight: 600;
+        color: #283155;
+      }
+
+      .person-summary-table td strong {
+        font-weight: 700;
+      }
+
+      .person-summary-table .muted {
+        color: #7b84a5;
+      }
+
+      .print-layout-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        table-layout: fixed;
+      }
+
+      .print-layout-table th,
+      .print-layout-table td {
+        border: 1px solid #d1d7ea;
+        padding: 0.55rem 0.65rem;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .print-layout-table thead th {
+        background: #e5e9ff;
+        font-weight: 700;
+        color: #1f2544;
+      }
+
+      .print-layout-table .assignment-badges {
+        gap: 0.25rem;
+      }
+
+      .print-layout-table .badge {
+        font-size: 0.78rem;
+        padding: 0.2rem 0.45rem;
+      }
+
+      .print-layout-table .muted {
+        color: #8089ab;
+      }
+
+      .app-shell {
+        position: relative;
+        min-height: 100vh;
+      }
+
+      .top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.85rem;
+        flex-wrap: wrap;
+      }
+
+      .top-bar h1 {
+        margin: 0;
+        font-size: 1.65rem;
+      }
+
+      .top-bar .subtitle {
+        margin: 0.35rem 0 0;
+        font-size: 0.9rem;
+        color: #5f6a86;
+      }
+
+      .top-bar-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .ghost-button {
+        border-radius: 8px;
+        border: 1px solid #d5d9ec;
+        background: #fff;
+        color: #273057;
+        font: inherit;
+        font-weight: 600;
+        padding: 0.6rem 1rem;
+        cursor: pointer;
+        transition: background 0.15s ease, border-color 0.15s ease;
+      }
+
+      .ghost-button:hover {
+        background: #eef1ff;
+        border-color: #c3c8eb;
+      }
+
+      .icon-button {
+        border: none;
+        background: transparent;
+        color: #495079;
+        font-size: 1.35rem;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0.3rem 0.4rem;
+        line-height: 1;
+      }
+
+      .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(21, 27, 51, 0.48);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease;
+        z-index: 90;
+      }
+
+      .drawer-backdrop.is-visible {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .drawer {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: min(360px, 100%);
+        background: #fff;
+        box-shadow: 12px 0 32px -24px rgba(15, 23, 66, 0.6);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 100;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .drawer.is-open {
+        transform: translateX(0);
+      }
+
+      .drawer-header {
+        padding: 1.25rem 1.5rem 1rem;
+        border-bottom: 1px solid #eaecf5;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .drawer-header h2 {
+        margin: 0;
+        font-size: 1.35rem;
+        font-weight: 600;
+        color: #1f2544;
+      }
+
+      .drawer-body {
+        padding: 1.25rem 1.5rem;
+        overflow-y: auto;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1.75rem;
+      }
+
+      .drawer-section {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .drawer-section h3 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #273057;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .drawer-footer {
+        padding: 1.1rem 1.5rem 1.5rem;
+        border-top: 1px solid #eaecf5;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        justify-content: flex-end;
+      }
+
+      .chart-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.75rem;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .calendar-wrapper {
+        overflow-x: auto;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 0.75rem;
+        min-width: 840px;
+        align-items: stretch;
+      }
+
+      .calendar-header {
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1f2544;
+        padding-bottom: 0.25rem;
+      }
+
+      .calendar-cell {
+        background: #f8f9ff;
+        border: 1px solid #dfe3f4;
+        border-radius: 10px;
+        padding: 0.65rem 0.6rem;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.45rem;
+      }
+
+      .calendar-cell.is-outside {
+        background: transparent;
+        border: 1px dashed #d0d5eb;
+        color: #9aa3bd;
+      }
+
+      .calendar-cell.is-sunday {
+        background: #fdf4ff;
+        border-color: #f5d0fe;
+      }
+
+      .calendar-day-number {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1f2544;
+      }
+
+      .calendar-cell.is-outside .calendar-day-number {
+        color: #a3acc5;
+      }
+
+      .calendar-cell.is-sunday .calendar-day-number {
+        color: #be185d;
+      }
+
+      .calendar-assignments {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .calendar-assignment {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        font-size: 0.9rem;
+        color: #273057;
+      }
+
+      .calendar-assignment .person {
+        font-weight: 600;
+        font-size: 0.85rem;
+      }
+
+      .calendar-off {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #c026d3;
+      }
+
+      .table-view table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 720px;
+      }
+
+      .table-view thead {
+        background: #f1f3fb;
+      }
+
+      .table-view th,
+      .table-view td {
+        padding: 0.75rem;
+        border: 1px solid #d9deeb;
+        vertical-align: top;
+        text-align: left;
+        font-size: 0.9rem;
+      }
+
+      .table-view thead th {
+        font-weight: 600;
+        color: #273057;
+        white-space: nowrap;
+      }
+
+      .table-view tbody th {
+        background: #f8f9ff;
+        font-weight: 600;
+        color: #273057;
+        white-space: nowrap;
+      }
+
+      .table-view .day-label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+        font-size: 0.85rem;
+      }
+
+      .table-view .day-label strong {
+        font-size: 0.9rem;
+        color: #1f2544;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          padding: 1.75rem 1rem 3rem;
+        }
+
+        section {
+          padding: 1.25rem;
+        }
+
+        .calendar-grid {
+          min-width: 720px;
+        }
+
+        .section-content {
+          flex-direction: column;
+        }
+
+        .stats-panel {
+          width: 100%;
+        }
+      }
+
+      @media print {
+        @page {
+          size: auto;
+          margin: 0.45in;
+        }
+
+        html,
+        body {
+          width: 100%;
+          background: #fff;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+
+        body {
+          margin: 0;
+        }
+
+        main {
+          max-width: none;
+          padding: 0;
+          width: 100%;
+          transform: scale(0.82);
+          transform-origin: top left;
+        }
+
+        section {
+          box-shadow: none;
+          border: none;
+          padding: 0;
+          margin: 0;
+          width: calc(100% / 0.82);
+        }
+
+        .top-bar,
+        .drawer,
+        .drawer-backdrop,
+        .chart-toolbar,
+        .summary,
+        .stats-panel {
+          display: none !important;
+        }
+
+        .section-content {
+          flex-direction: column;
+          gap: 0.3rem;
+        }
+
+        .chart-content {
+          gap: 0.35rem;
+          page-break-inside: avoid;
+        }
+
+        .chart-wrapper {
+          overflow: visible;
+        }
+
+        .calendar-grid {
+          min-width: 0;
+          gap: 0.28rem;
+          width: 100%;
+        }
+
+        .calendar-cell {
+          padding: 0.4rem 0.32rem;
+          min-height: 88px;
+          page-break-inside: avoid;
+        }
+
+        .calendar-day-number {
+          font-size: 0.78rem;
+        }
+
+        .calendar-assignment {
+          font-size: 0.72rem;
+        }
+
+        .calendar-assignment .person {
+          font-size: 0.68rem;
+        }
+
+        .assignment-badges {
+          gap: 0.18rem;
+        }
+
+        .badge {
+          font-size: 0.72rem;
+          padding: 0.16rem 0.38rem;
+        }
+
+        .table-view table {
+          width: 100%;
+          table-layout: fixed;
+          font-size: 0.72rem;
+        }
+
+        .table-view th,
+        .table-view td {
+          padding: 0.35rem 0.3rem;
+        }
+
+        table {
+          min-width: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="text/babel">
+      const { useEffect, useMemo, useRef, useState } = React;
+
+      const VIEW_MODES = {
+        CALENDAR: "calendar",
+        TABLE: "table",
+      };
+      const CHORE_COLOR_PALETTE = [
+        "#FDE68A",
+        "#BFDBFE",
+        "#C7D2FE",
+        "#FECACA",
+        "#A7F3D0",
+        "#FBCFE8",
+        "#FCD34D",
+        "#DDD6FE",
+        "#BBF7D0",
+        "#FEC89A",
+        "#E0E7FF",
+        "#BEE3F8",
+      ];
+
+      const DAYS_OF_WEEK = [
+        { index: 0, label: "Sunday", short: "Sun" },
+        { index: 1, label: "Monday", short: "Mon" },
+        { index: 2, label: "Tuesday", short: "Tue" },
+        { index: 3, label: "Wednesday", short: "Wed" },
+        { index: 4, label: "Thursday", short: "Thu" },
+        { index: 5, label: "Friday", short: "Fri" },
+        { index: 6, label: "Saturday", short: "Sat" },
+      ];
+      const ROTATION_DIRECTIONS = {
+        FORWARD: "forward",
+        REVERSE: "reverse",
+      };
+
+      const parseLines = (value) =>
+        value
+          .split("\n")
+          .map((line) => line.trim())
+          .filter(Boolean);
+
+      const defaultMonth = (date) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        return `${year}-${month}`;
+      };
+
+      const isoFromDate = (date) => {
+        const year = date.getUTCFullYear();
+        const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+        const day = String(date.getUTCDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
+
+      const createUTCDate = (value) => {
+        if (!value) return null;
+        const parts = value.split("-");
+        if (parts.length < 3) return null;
+        const [year, month, day] = parts.map(Number);
+        if ([year, month, day].some((part) => Number.isNaN(part))) {
+          return null;
+        }
+        const date = new Date(Date.UTC(year, month - 1, day));
+        if (Number.isNaN(date.getTime())) {
+          return null;
+        }
+        date.setUTCHours(0, 0, 0, 0);
+        return date;
+      };
+
+      const coerceAssignableDate = (value) => {
+        const date = createUTCDate(value);
+        if (!date) {
+          return { value: "", adjusted: false };
+        }
+        if (date.getUTCDay() === 0) {
+          date.setUTCDate(date.getUTCDate() + 1);
+          return { value: isoFromDate(date), adjusted: true };
+        }
+        return { value: isoFromDate(date), adjusted: false };
+      };
+
+      const computeShiftFromStart = (
+        startDateISO,
+        targetDateKey,
+        shouldCount = (date) => date.getUTCDay() !== 0
+      ) => {
+        if (!startDateISO) return null;
+        const start = createUTCDate(startDateISO);
+        const target = createUTCDate(targetDateKey);
+        if (!start || !target) return null;
+
+        if (start.getTime() === target.getTime()) {
+          return 0;
+        }
+
+        const increment = target > start ? 1 : -1;
+        const cursor = new Date(start.getTime());
+        let shift = 0;
+
+        while ((increment > 0 && cursor < target) || (increment < 0 && cursor > target)) {
+          cursor.setUTCDate(cursor.getUTCDate() + increment);
+          if (shouldCount(cursor)) {
+            shift += increment;
+          }
+        }
+
+        if (cursor.getTime() !== target.getTime()) {
+          return null;
+        }
+
+        return shift;
+      };
+
+      const getDaysInMonth = (year, month) => {
+        const days = [];
+        const cursor = new Date(year, month, 1);
+
+        while (cursor.getMonth() === month) {
+          const dayDate = new Date(cursor);
+
+          if (dayDate.getDay() !== 0) {
+            const dateKey = dayDate.toISOString().slice(0, 10);
+            days.push({
+              label: dayDate.toLocaleDateString(undefined, {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+              }),
+              index: days.length,
+              iso: dayDate.toISOString(),
+              weekday: dayDate.getDay(),
+              dateKey,
+            });
+          }
+
+          cursor.setDate(cursor.getDate() + 1);
+        }
+
+        return days;
+      };
+
+      const buildRotation = ({
+        weekdayChores,
+        weekendAlternates,
+        people,
+        days,
+        startDate,
+        startOffset,
+        direction,
+      }) => {
+        if (!people.length) {
+          return { message: "Add at least one eligible person to build the rotation.", days: [] };
+        }
+
+        if (!weekdayChores.length) {
+          return { message: "Add weekday chores to populate the chart.", days: [] };
+        }
+
+        return {
+          days: days.map((day) => {
+            const assignments = {};
+            people.forEach((person) => {
+              assignments[person] = [];
+            });
+
+            const shiftFromStart = computeShiftFromStart(
+              startDate,
+              day.dateKey,
+              (date) => date.getUTCDay() !== 0
+            );
+
+            const shift = shiftFromStart ?? day.index;
+            const multiplier = direction === ROTATION_DIRECTIONS.REVERSE ? -1 : 1;
+            const adjustedShift = shift * multiplier;
+            const activeChores = weekdayChores;
+
+            activeChores.forEach((chore, index) => {
+              const personIndex =
+                ((index + adjustedShift + startOffset) % people.length + people.length) %
+                people.length;
+              const person = people[personIndex];
+              const isSaturday = day.weekday === 6;
+              const alternate = weekendAlternates[index] || "";
+              assignments[person].push(isSaturday && alternate ? alternate : chore);
+            });
+
+            return { ...day, assignments, shift };
+          }),
+        };
+      };
+
+      const assignChoreColors = (weekdayChores, weekendAlternates) => {
+        const palette = CHORE_COLOR_PALETTE;
+        const colorMap = {};
+        const combined = [
+          ...weekdayChores,
+          ...weekendAlternates.filter((item) => item && item.trim() !== ""),
+        ];
+
+        combined.forEach((chore) => {
+          const key = chore.toLowerCase();
+          let hash = 0;
+          for (let i = 0; i < key.length; i += 1) {
+            hash = (hash + key.charCodeAt(i) * (i + 1)) % 997;
+          }
+          colorMap[chore] = palette[hash % palette.length];
+        });
+
+        return colorMap;
+      };
+
+      const buildCalendarWeeks = (year, month, scheduledDays) => {
+        const assignments = new Map();
+        scheduledDays.forEach((day) => {
+          assignments.set(day.dateKey, day);
+        });
+
+        const firstOfMonth = new Date(year, month, 1);
+        const lastOfMonth = new Date(year, month + 1, 0);
+
+        const start = new Date(firstOfMonth);
+        start.setDate(firstOfMonth.getDate() - firstOfMonth.getDay());
+        start.setHours(0, 0, 0, 0);
+
+        const weeks = [];
+        let cursor = new Date(start);
+
+        while (cursor <= lastOfMonth || cursor.getDay() !== 0 || weeks.length === 0) {
+          const week = [];
+
+          for (let i = 0; i < 7; i += 1) {
+            const cellDate = new Date(cursor);
+            const dateKey = cellDate.toISOString().slice(0, 10);
+
+            week.push({
+              date: cellDate,
+              dateKey,
+              inMonth: cellDate.getMonth() === month,
+              assignment: assignments.get(dateKey),
+            });
+
+            cursor.setDate(cursor.getDate() + 1);
+          }
+
+          weeks.push(week);
+        }
+
+        return weeks;
+      };
+
+      const Summary = ({
+        weekdayChores,
+        weekendAlternates,
+        people,
+        days,
+        startDate,
+        startingPerson,
+        direction,
+      }) => {
+        const weekdayDays = days.filter((day) => day.weekday !== 6).length;
+        const saturdayDays = days.filter((day) => day.weekday === 6).length;
+        const hasWeekdayChores = weekdayChores.length > 0;
+        const hasData = hasWeekdayChores && people.length && days.length;
+        const totalAssignments = days.length * weekdayChores.length;
+        const weekendAlternateCount = weekendAlternates.filter((item) => item && item.trim()).length;
+        const formattedStart = startDate
+          ? createUTCDate(startDate)?.toLocaleDateString(undefined, {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
+          : null;
+        const directionLabel =
+          direction === ROTATION_DIRECTIONS.REVERSE ? "up the list" : "down the list";
+
+        return (
+          <div className="stats-card">
+            <h3>Monthly Stats</h3>
+            {hasData ? (
+              <>
+                <ul className="stats-list">
+                  <li>
+                    <strong>{people.length}</strong> {people.length === 1 ? "person" : "people"} rotate
+                    through <strong>{weekdayChores.length}</strong> weekday chore
+                    {weekdayChores.length === 1 ? "" : "s"}
+                    {weekendAlternateCount
+                      ? ` (${weekendAlternateCount} with weekend alternates)`
+                      : ""}.
+                  </li>
+                  <li>
+                    <strong>{weekdayDays}</strong> weekday{weekdayDays === 1 ? "" : "s"} and{" "}
+                    <strong>{saturdayDays}</strong> Saturday{saturdayDays === 1 ? "" : "s"} this month,
+                    totaling <strong>{totalAssignments}</strong>{" "}
+                    {totalAssignments === 1 ? "assignment" : "assignments"}.
+                  </li>
+                  {formattedStart && startingPerson ? (
+                    <li>
+                      Seeded on <strong>{formattedStart}</strong> with{" "}
+                      <strong>{startingPerson}</strong> starting day 1.
+                    </li>
+                  ) : null}
+                  <li>
+                    Rotation moves <strong>{directionLabel}</strong> as the month progresses.
+                  </li>
+                </ul>
+                <div style={{ color: "#5f6a86", fontSize: "0.85rem" }}>
+                  Sundays are skipped automatically.
+                </div>
+              </>
+            ) : (
+              <div className="helper" style={{ color: "#677297" }}>
+                Add people and weekday chores to generate monthly statistics. Sundays are skipped
+                automatically.
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      const PersonSummaryTable = ({ summary }) => {
+        if (!summary.length) {
+          return (
+            <div className="stats-card">
+              <h3>Assignments by Person</h3>
+              <div className="helper" style={{ color: "#677297" }}>
+                Once chores are assigned, you&apos;ll see each person&apos;s totals here.
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div className="stats-card">
+            <h3>Assignments by Person</h3>
+            <table className="person-summary-table">
+              <thead>
+                <tr>
+                  <th>Person</th>
+                  <th>Total Assignments</th>
+                  <th>Chores</th>
+                </tr>
+              </thead>
+              <tbody>
+                {summary.map(({ person, total, chores }) => (
+                  <tr key={person}>
+                    <th scope="row">{person}</th>
+                    <td>
+                      <strong>{total}</strong>
+                    </td>
+                    <td>
+                      {chores.length ? (
+                        <span>
+                          {chores
+                            .slice(0, 3)
+                            .map(([chore, count]) => `${chore} (${count})`)
+                            .join(", ")}
+                          {chores.length > 3 ? "…" : ""}
+                        </span>
+                      ) : (
+                        <span className="muted">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+
+      const PrintLayoutTable = ({ people, days, choreColors }) => {
+        if (!people.length || !days.length) {
+          return (
+            <div className="empty">
+              Add people and weekday chores to generate the condensed print layout.
+            </div>
+          );
+        }
+
+        return (
+          <div className="chart-wrapper">
+            <table className="print-layout-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  {people.map((person) => (
+                    <th key={person}>{person}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {days.map((day) => {
+                  const date = new Date(day.iso);
+                  const formattedDate = date.toLocaleDateString(undefined, {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                  });
+                  return (
+                    <tr key={day.iso}>
+                      <th scope="row">{formattedDate}</th>
+                      {people.map((person) => {
+                        const assignments = day.assignments[person] || [];
+                        return (
+                          <td key={`${day.iso}-${person}`}>
+                            {assignments.length ? (
+                              <div className="assignment-badges">
+                                {assignments.map((chore) => (
+                                  <ChoreBadge
+                                    key={`${day.iso}-${person}-${chore}`}
+                                    chore={chore}
+                                    color={choreColors[chore]}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="muted">—</span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+
+      const ChoreBadge = ({ chore, color }) => {
+        const background = color || "#e8eaf9";
+        return (
+          <span
+            className="badge"
+            style={{
+              backgroundColor: background,
+              color: "#1f2937",
+            }}
+          >
+            {chore}
+          </span>
+        );
+      };
+
+      const CalendarView = ({ weeks, people, choreColors }) => {
+        if (!weeks.length) {
+          return (
+            <div className="empty">
+              Add weekday chores and people to generate the monthly rotation.
+            </div>
+          );
+        }
+
+        return (
+          <div className="calendar-wrapper">
+            <div className="calendar-grid">
+              {DAYS_OF_WEEK.map((day) => (
+                <div className="calendar-header" key={`header-${day.index}`} title={day.label}>
+                  {day.short}
+                </div>
+              ))}
+              {weeks.map((week, weekIndex) =>
+                week.map((cell, dayIndex) => {
+                  const { date, inMonth, assignment, dateKey } = cell;
+                  const key = `${weekIndex}-${dateKey}-${dayIndex}`;
+                  const isSunday = date.getDay() === 0;
+
+                  const classNames = ["calendar-cell"];
+                  if (!inMonth) {
+                    classNames.push("is-outside");
+                  }
+                  if (isSunday) {
+                    classNames.push("is-sunday");
+                  }
+
+                  return (
+                    <div className={classNames.join(" ")} key={key}>
+                      <div className="calendar-day-number">{inMonth ? date.getDate() : ""}</div>
+                      {assignment ? (
+                        <div className="calendar-assignments">
+                          {people.map((person) => {
+                            const chores = assignment.assignments[person] || [];
+                            if (!chores.length) {
+                              return null;
+                            }
+
+                            return (
+                              <div className="calendar-assignment" key={`${dateKey}-${person}`}>
+                                <span className="person">{person}</span>
+                                <div className="assignment-badges">
+                                  {chores.map((chore) => (
+                                    <ChoreBadge
+                                      key={`${dateKey}-${person}-${chore}`}
+                                      chore={chore}
+                                      color={choreColors[chore]}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : inMonth && isSunday ? (
+                        <div className="calendar-off">Day off</div>
+                      ) : null}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+        );
+      };
+
+      const PersonDayTable = ({ people, days, choreColors }) => {
+        if (!people.length || !days.length) {
+          return (
+            <div className="empty">
+              Add weekday chores and people to generate the monthly rotation.
+            </div>
+          );
+        }
+
+        return (
+          <div className="chart-wrapper table-view">
+            <table>
+              <thead>
+                <tr>
+                  <th>Person</th>
+                  {days.map((day) => {
+                    const date = new Date(day.iso);
+                    return (
+                      <th key={day.iso}>
+                        <div className="day-label">
+                          <strong>
+                            {date.toLocaleDateString(undefined, { weekday: "short" })}
+                          </strong>
+                          <span>
+                            {date.toLocaleDateString(undefined, {
+                              month: "short",
+                              day: "numeric",
+                            })}
+                          </span>
+                        </div>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {people.map((person) => (
+                  <tr key={person}>
+                    <th scope="row">{person}</th>
+                    {days.map((day) => {
+                      const chores = day.assignments[person] || [];
+                      return (
+                        <td key={`${day.iso}-${person}`}>
+                          {chores.length ? (
+                            <div className="assignment-badges">
+                              {chores.map((chore) => (
+                                <ChoreBadge
+                                  key={`${day.iso}-${person}-${chore}`}
+                                  chore={chore}
+                                  color={choreColors[chore]}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <span style={{ color: "#9aa3bd" }}>—</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      };
+
+      const ViewToggle = ({ value, onChange }) => (
+        <div className="view-toggle">
+          <span>Display As:</span>
+          <label>
+            <input
+              type="radio"
+              name="view-mode"
+              value={VIEW_MODES.CALENDAR}
+              checked={value === VIEW_MODES.CALENDAR}
+              onChange={() => onChange(VIEW_MODES.CALENDAR)}
+            />
+            Calendar
+          </label>
+          <label>
+            <input
+              type="radio"
+              name="view-mode"
+              value={VIEW_MODES.TABLE}
+              checked={value === VIEW_MODES.TABLE}
+              onChange={() => onChange(VIEW_MODES.TABLE)}
+            />
+            Table
+          </label>
+        </div>
+      );
+
+      const App = () => {
+        const today = useMemo(() => new Date(), []);
+
+        const [month, setMonth] = useState(defaultMonth(today));
+        const [peopleText, setPeopleText] = useState("");
+        const [weekdayChoresText, setWeekdayChoresText] = useState("");
+        const [weekendAlternatesText, setWeekendAlternatesText] = useState("");
+        const [viewMode, setViewMode] = useState(VIEW_MODES.CALENDAR);
+        const [rotationDirection, setRotationDirection] = useState(ROTATION_DIRECTIONS.FORWARD);
+        const [rotationStartDate, setRotationStartDate] = useState("");
+        const [startingPerson, setStartingPerson] = useState("");
+        const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+        const [showStats, setShowStats] = useState(false);
+        const [printLayout, setPrintLayout] = useState(false);
+        const [startDateNote, setStartDateNote] = useState("");
+        const [configLoaded, setConfigLoaded] = useState(false);
+        const [configError, setConfigError] = useState(null);
+        const saveTimeoutRef = useRef(null);
+        const printContainerRef = useRef(null);
+        const previousStatsRef = useRef(showStats);
+
+        useEffect(() => {
+          previousStatsRef.current = showStats;
+        }, [showStats]);
+
+        useEffect(() => {
+          let isMounted = true;
+
+          const loadConfig = async () => {
+            try {
+              const response = await fetch("/api/config");
+              if (!response.ok) {
+                throw new Error(`Request failed with status ${response.status}`);
+              }
+
+              const data = await response.json();
+              if (!isMounted) return;
+
+              const savedMonth = data.month;
+              const currentMonth = defaultMonth(today);
+              setMonth(savedMonth || currentMonth);
+              setPeopleText(data.peopleText || "");
+              const weekdayText = data.weekdayChoresText || data.choresText || "";
+              setWeekdayChoresText(weekdayText);
+              setWeekendAlternatesText(data.weekendAlternatesText || "");
+              setViewMode(data.viewMode || VIEW_MODES.CALENDAR);
+              setRotationDirection(
+                data.rotationDirection === ROTATION_DIRECTIONS.REVERSE
+                  ? ROTATION_DIRECTIONS.REVERSE
+                  : ROTATION_DIRECTIONS.FORWARD
+              );
+              setRotationStartDate(data.rotationStartDate || "");
+              setStartingPerson(data.startingPerson || "");
+              setConfigError(null);
+            } catch (error) {
+              console.error("Failed to load configuration", error);
+              if (isMounted) {
+                setConfigError("Unable to load saved configuration. Using defaults.");
+              }
+            } finally {
+              if (isMounted) {
+                setConfigLoaded(true);
+              }
+            }
+          };
+
+          loadConfig();
+
+          return () => {
+            isMounted = false;
+          };
+        }, [today]);
+
+        useEffect(() => {
+          if (!configLoaded) return;
+
+          if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+          }
+
+          const payload = {
+            month,
+            peopleText,
+            weekdayChoresText,
+            weekendAlternatesText,
+            viewMode,
+            rotationStartDate,
+            startingPerson,
+            rotationDirection,
+          };
+
+          saveTimeoutRef.current = setTimeout(() => {
+            fetch("/api/config", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload),
+            }).catch((error) => {
+              console.error("Failed to persist configuration", error);
+            });
+          }, 500);
+
+          return () => {
+            if (saveTimeoutRef.current) {
+              clearTimeout(saveTimeoutRef.current);
+            }
+          };
+        }, [
+          configLoaded,
+          month,
+          peopleText,
+          weekdayChoresText,
+          weekendAlternatesText,
+          viewMode,
+          rotationStartDate,
+          startingPerson,
+          rotationDirection,
+        ]);
+
+        const people = useMemo(() => parseLines(peopleText), [peopleText]);
+        const weekdayChores = useMemo(() => parseLines(weekdayChoresText), [weekdayChoresText]);
+        const weekendAlternates = useMemo(
+          () => parseLines(weekendAlternatesText),
+          [weekendAlternatesText]
+        );
+
+        useEffect(() => {
+          if (printLayout) {
+            setShowStats(false);
+          }
+        }, [printLayout]);
+
+        useEffect(() => {
+          if (!people.length) {
+            setStartingPerson("");
+            return;
+          }
+          if (!startingPerson || !people.includes(startingPerson)) {
+            setStartingPerson(people[0]);
+          }
+        }, [people, startingPerson]);
+
+        const [year, monthIndex] = useMemo(() => {
+          if (!month) {
+            return [today.getFullYear(), today.getMonth() + 1];
+          }
+          const parts = month.split("-");
+          if (parts.length < 2) {
+            return [today.getFullYear(), today.getMonth() + 1];
+          }
+          const parsedYear = Number(parts[0]);
+          const parsedMonth = Number(parts[1]);
+          if (Number.isNaN(parsedYear) || Number.isNaN(parsedMonth)) {
+            return [today.getFullYear(), today.getMonth() + 1];
+          }
+          return [parsedYear, parsedMonth];
+        }, [month, today]);
+
+        const days = useMemo(
+          () => getDaysInMonth(year, monthIndex - 1),
+          [year, monthIndex]
+        );
+
+        useEffect(() => {
+          if (!rotationStartDate && days.length) {
+            setRotationStartDate(days[0].dateKey);
+          }
+        }, [rotationStartDate, days]);
+
+        const startingPersonEffective = useMemo(() => {
+          if (!people.length) return "";
+          if (startingPerson && people.includes(startingPerson)) {
+            return startingPerson;
+          }
+          return people[0];
+        }, [people, startingPerson]);
+
+        const startOffset = useMemo(() => {
+          if (!people.length) return 0;
+          const index = people.indexOf(startingPersonEffective);
+          return index >= 0 ? index : 0;
+        }, [people, startingPersonEffective]);
+
+        const rotation = useMemo(
+          () =>
+            buildRotation({
+              weekdayChores,
+              weekendAlternates,
+              people,
+              days,
+              startDate: rotationStartDate,
+              startOffset,
+              direction: rotationDirection,
+            }),
+          [weekdayChores, weekendAlternates, people, days, rotationStartDate, startOffset, rotationDirection]
+        );
+
+        const scheduledDays = rotation.days || [];
+        const choreColors = useMemo(
+          () => assignChoreColors(weekdayChores, weekendAlternates),
+          [weekdayChores, weekendAlternates]
+        );
+        const calendarWeeks = useMemo(
+          () => buildCalendarWeeks(year, monthIndex - 1, scheduledDays),
+          [year, monthIndex, scheduledDays]
+        );
+        const personSummary = useMemo(() => {
+          if (!people.length || !scheduledDays.length) {
+            return [];
+          }
+
+          const summaryMap = new Map(
+            people.map((person) => [
+              person,
+              {
+                person,
+                total: 0,
+                chores: {},
+              },
+            ])
+          );
+
+          scheduledDays.forEach((day) => {
+            people.forEach((person) => {
+              const assignments = day.assignments[person] || [];
+              if (!assignments.length) return;
+              const record = summaryMap.get(person);
+              record.total += assignments.length;
+              assignments.forEach((chore) => {
+                record.chores[chore] = (record.chores[chore] || 0) + 1;
+              });
+            });
+          });
+
+          return people.map((person) => {
+            const record = summaryMap.get(person);
+            const chores = Object.entries(record.chores).sort((a, b) => {
+              if (b[1] === a[1]) {
+                return a[0].localeCompare(b[0]);
+              }
+              return b[1] - a[1];
+            });
+            return {
+              person,
+              total: record.total,
+              chores,
+            };
+          });
+        }, [people, scheduledDays]);
+
+        const waitForRender = (delay = 220) =>
+          new Promise((resolve) => setTimeout(resolve, delay));
+
+        const withPrintLayout = async (task) => {
+          const previousLayout = printLayout;
+          const previousStats = showStats;
+          previousStatsRef.current = showStats;
+          if (!previousLayout) {
+            setPrintLayout(true);
+          }
+          if (previousStats) {
+            setShowStats(false);
+          }
+          await waitForRender();
+          try {
+            await task();
+          } finally {
+            if (!previousLayout) {
+              setPrintLayout(false);
+              await waitForRender(120);
+            }
+            if (previousStats) {
+              setShowStats(previousStatsRef.current);
+            }
+          }
+        };
+
+        const handlePrint = () => {
+          withPrintLayout(async () => {
+            window.print();
+          });
+        };
+
+        const handleExportPdf = async () => {
+          await withPrintLayout(async () => {
+            if (!printContainerRef.current) {
+              console.warn("Unable to locate print container for PDF export.");
+              return;
+            }
+            if (!window.html2canvas || !window.jspdf) {
+              console.warn("PDF export libraries failed to load.");
+              return;
+            }
+
+            const target = printContainerRef.current;
+            const canvas = await window.html2canvas(target, {
+              scale: 2,
+              useCORS: true,
+              backgroundColor: "#ffffff",
+            });
+            const imgData = canvas.toDataURL("image/png");
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ orientation: "landscape", unit: "pt", format: "letter" });
+            const pageWidth = pdf.internal.pageSize.getWidth();
+            const pageHeight = pdf.internal.pageSize.getHeight();
+            const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
+            const imgWidth = canvas.width * ratio;
+            const imgHeight = canvas.height * ratio;
+            const x = (pageWidth - imgWidth) / 2;
+            const y = (pageHeight - imgHeight) / 2;
+            pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+            const filename = `${
+              month
+                ? monthLabel.replace(/\s+/g, "-").toLowerCase()
+                : "chore-chart"
+            }-chore-chart.pdf`;
+            pdf.save(filename);
+          });
+        };
+
+        const handleStatsToggle = () => {
+          if (printLayout) return;
+          setShowStats((value) => {
+            const next = !value;
+            previousStatsRef.current = next;
+            return next;
+          });
+        };
+
+        const handleMonthStep = (delta) => {
+          setMonth((current) => {
+            const base = current || defaultMonth(today);
+            const [yearStr, monthStr] = base.split("-");
+            const parsedYear = Number(yearStr);
+            const parsedMonth = Number(monthStr);
+            if (Number.isNaN(parsedYear) || Number.isNaN(parsedMonth)) {
+              return defaultMonth(today);
+            }
+            const next = new Date(parsedYear, parsedMonth - 1 + delta, 1);
+            return defaultMonth(next);
+          });
+        };
+
+        const handleUseSample = () => {
+          const sampleMonth = defaultMonth(today);
+          setMonth(sampleMonth);
+          setViewMode(VIEW_MODES.CALENDAR);
+          setPeopleText(["Alex", "Jordan", "Riley", "Sam"].join("\n"));
+          setWeekdayChoresText(
+            ["Dishes", "Laundry", "Trash & Recycling", "Vacuum Living Room", "Feed Pets"].join("\n")
+          );
+          setWeekendAlternatesText(["Deep Clean Kitchen", "Meal Prep", "Wash Sheets"].join("\n"));
+          setStartingPerson("Alex");
+          setRotationDirection(ROTATION_DIRECTIONS.FORWARD);
+          const [sampleYear, sampleMonthIndex] = sampleMonth.split("-").map(Number);
+          const sampleDays = getDaysInMonth(sampleYear, sampleMonthIndex - 1);
+          setRotationStartDate(sampleDays[0]?.dateKey || "");
+          setStartDateNote("");
+          setIsDrawerOpen(false);
+        };
+
+        const monthLabel = useMemo(() => {
+          const date = new Date(year, monthIndex - 1);
+          return date.toLocaleDateString(undefined, {
+            month: "long",
+            year: "numeric",
+          });
+        }, [year, monthIndex]);
+
+        const handleRotationStartChange = (event) => {
+          const inputValue = event.target.value;
+          if (!inputValue) {
+            setRotationStartDate("");
+            setStartDateNote("");
+            return;
+          }
+          const { value, adjusted } = coerceAssignableDate(inputValue);
+          setRotationStartDate(value);
+          setStartDateNote(
+            adjusted ? "Sundays are days off, so the start date was shifted to Monday." : ""
+          );
+        };
+
+        return (
+          <div
+            className={`app-shell${isDrawerOpen ? " drawer-open" : ""}${printLayout ? " print-layout-active" : ""}`}
+          >
+            <aside className={`drawer${isDrawerOpen ? " is-open" : ""}`}>
+              <div className="drawer-header">
+                <h2>Plan Rotation</h2>
+                <button
+                  type="button"
+                  className="icon-button"
+                  aria-label="Close planner"
+                  onClick={() => setIsDrawerOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
+              <div className="drawer-body">
+                <div className="drawer-section">
+                  <h3>Schedule</h3>
+                  <div className="field-group">
+                    <label htmlFor="drawer-month">
+                      Focus Month
+                      <span className="helper">Pick a month to generate the daily rotation.</span>
+                    </label>
+                    <input
+                      id="drawer-month"
+                      type="month"
+                      value={month}
+                      onChange={(event) => setMonth(event.target.value)}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="rotation-start">
+                      Rotation Starts On
+                      <span className="helper">
+                        Choose the day 1 date so the rotation can stay synced across months.
+                      </span>
+                    </label>
+                    <input
+                      id="rotation-start"
+                      type="date"
+                      value={rotationStartDate}
+                      onChange={handleRotationStartChange}
+                    />
+                    {startDateNote ? (
+                      <p className="helper" style={{ color: "#a21caf" }}>{startDateNote}</p>
+                    ) : null}
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="rotation-direction">
+                      Rotation Direction
+                      <span className="helper">Choose how chores advance between days.</span>
+                    </label>
+                    <select
+                      id="rotation-direction"
+                      value={rotationDirection}
+                      onChange={(event) => setRotationDirection(event.target.value)}
+                    >
+                      <option value={ROTATION_DIRECTIONS.FORWARD}>Rotate down the list</option>
+                      <option value={ROTATION_DIRECTIONS.REVERSE}>Rotate up the list</option>
+                    </select>
+                  </div>
+                  {people.length ? (
+                    <div className="field-group">
+                      <label htmlFor="starting-person">
+                        Day 1 starts with
+                        <span className="helper">
+                          Select who should take the first chore on day 1.
+                        </span>
+                      </label>
+                      <select
+                        id="starting-person"
+                        value={startingPersonEffective}
+                        onChange={(event) => setStartingPerson(event.target.value)}
+                      >
+                        {people.map((person) => (
+                          <option value={person} key={person}>
+                            {person}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : null}
+                </div>
+                <div className="drawer-section">
+                  <h3>People</h3>
+                  <div className="field-group">
+                    <label htmlFor="drawer-people">
+                      Eligible People
+                      <span className="helper">One name per line.</span>
+                    </label>
+                    <textarea
+                      id="drawer-people"
+                      placeholder="e.g. Alex&#10;Jordan&#10;Riley"
+                      value={peopleText}
+                      onChange={(event) => setPeopleText(event.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="drawer-section">
+                  <h3>Chores</h3>
+                  <div className="field-group">
+                    <label htmlFor="drawer-weekday-chores">
+                      Weekday Chores
+                      <span className="helper">One task per line.</span>
+                    </label>
+                    <textarea
+                      id="drawer-weekday-chores"
+                      placeholder="e.g. Dishes&#10;Laundry&#10;Trash&#10;Vacuum"
+                      value={weekdayChoresText}
+                      onChange={(event) => setWeekdayChoresText(event.target.value)}
+                    />
+                  </div>
+                  <div className="field-group">
+                    <label htmlFor="drawer-weekend-alternates">
+                      Weekend Alternates (optional)
+                      <span className="helper">
+                        Matches the weekday list order; leave a line blank to reuse the weekday chore.
+                      </span>
+                    </label>
+                    <textarea
+                      id="drawer-weekend-alternates"
+                      placeholder="e.g. Deep Clean Kitchen&#10;Meal Prep"
+                      value={weekendAlternatesText}
+                      onChange={(event) => setWeekendAlternatesText(event.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </aside>
+            <div
+              className={`drawer-backdrop${isDrawerOpen ? " is-visible" : ""}`}
+              onClick={() => setIsDrawerOpen(false)}
+              role="presentation"
+            />
+            <main>
+              <div className="top-bar">
+                <button
+                  className="ghost-button"
+                  type="button"
+                  onClick={() => setIsDrawerOpen(true)}
+                >
+                  Open Planner
+                </button>
+                <h1>Nelford Family Monthly Chore Chart</h1>
+              </div>
+              <div className="chart-toolbar">
+                <div className="chart-toolbar__controls">
+                  <button className="ghost-button" type="button" onClick={handleStatsToggle}>
+                    {showStats ? "Hide Stats" : "Show Stats"}
+                  </button>
+                  <button className="ghost-button" type="button" onClick={handleExportPdf}>
+                    Export PDF
+                  </button>
+                  <button className="primary" type="button" onClick={handlePrint}>
+                    Print
+                  </button>
+                </div>
+                <ViewToggle value={viewMode} onChange={setViewMode} />
+              </div>
+              <section ref={printContainerRef}>
+                <div className="section-header">
+                  <button className="month-nav" onClick={() => handleMonthStep(-1)} aria-label="Previous month">
+                    ‹
+                  </button>
+                  <h2 className="month-title">{monthLabel}</h2>
+                  <button className="month-nav" onClick={() => handleMonthStep(1)} aria-label="Next month">
+                    ›
+                  </button>
+                </div>
+                <div className="section-content">
+                  <div className="chart-content">
+                    {configError ? (
+                      <div className="helper" style={{ color: "#c2410c" }}>
+                        {configError}
+                      </div>
+                    ) : null}
+                    {rotation.message ? (
+                      <div className="empty">{rotation.message}</div>
+                    ) : !scheduledDays.length ? (
+                      <div className="empty">
+                        Add weekday chores and people to generate the monthly rotation.
+                      </div>
+                    ) : printLayout ? (
+                      <PrintLayoutTable people={people} days={scheduledDays} choreColors={choreColors} />
+                    ) : viewMode === VIEW_MODES.CALENDAR ? (
+                      <CalendarView weeks={calendarWeeks} people={people} choreColors={choreColors} />
+                    ) : (
+                      <PersonDayTable people={people} days={scheduledDays} choreColors={choreColors} />
+                    )}
+                  </div>
+                  {showStats && !printLayout ? (
+                    <aside className="stats-panel">
+                      <Summary
+                        weekdayChores={weekdayChores}
+                        weekendAlternates={weekendAlternates}
+                        people={people}
+                        days={scheduledDays}
+                        startDate={rotationStartDate}
+                        startingPerson={startingPersonEffective}
+                        direction={rotationDirection}
+                      />
+                      <PersonSummaryTable summary={personSummary} />
+                    </aside>
+                  ) : null}
+                </div>
+              </section>
+            </main>
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>

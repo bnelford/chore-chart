@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  chore-chart:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chore-chart
+    restart: unless-stopped
+    ports:
+      - "53123:8080"
+    volumes:
+      - ./config:/app/config
+    networks:
+      - chore-net
+
+networks:
+  chore-net:
+    driver: bridge
+

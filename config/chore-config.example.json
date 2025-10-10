@@ -1,0 +1,11 @@
+{
+  "month": null,
+  "peopleText": "Alex\nJordan\nRiley\nSam",
+  "weekdayChoresText": "Dishes\nLaundry\nTrash & Recycling\nVacuum Living Room\nFeed Pets",
+  "weekendAlternatesText": "Deep Clean Kitchen\nMeal Prep\nGrocery Pick-Up\nSweep Deck\nBrush Pets",
+  "rotationStartDate": null,
+  "rotationDirection": "forward",
+  "startingPerson": "",
+  "viewMode": "calendar"
+}
+
