@@ -10,7 +10,7 @@ COPY server ./server
 COPY config ./config
 
 ENV NODE_ENV=production
-EXPOSE 8080
+ENV PORT=53123
+EXPOSE 53123
 
 CMD ["node", "server/index.js"]
-

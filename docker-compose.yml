@@ -8,7 +8,7 @@ services:
     container_name: chore-chart
     restart: unless-stopped
     ports:
-      - "53123:8080"
+      - "53123:53123"
     volumes:
       - ./config:/app/config
     networks:
@@ -17,4 +17,3 @@ services:
 networks:
   chore-net:
     driver: bridge
-
