@@ -4,10 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "test": "node --test test/security.test.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.22.3"
   }
 }
 

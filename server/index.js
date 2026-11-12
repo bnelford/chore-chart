@@ -22,6 +22,71 @@ const DEFAULT_CONFIG = {
   viewMode: "calendar"
 };
 
+const TEXT_FIELDS = [
+  "peopleText",
+  "weekdayChoresText",
+  "weekendAlternatesText",
+  "startingPerson",
+];
+const NULLABLE_TEXT_FIELDS = ["month", "rotationStartDate"];
+const STRING_FIELDS = ["rotationDirection", "viewMode"];
+
+const isPlainObject = (value) => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+  const prototype = Object.getPrototypeOf(value);
+  return prototype === Object.prototype || prototype === null;
+};
+
+const sanitizeConfig = (input) => {
+  if (!isPlainObject(input)) {
+    return null;
+  }
+
+  const safe = { ...DEFAULT_CONFIG };
+  for (const key of TEXT_FIELDS) {
+    if (typeof input[key] === "string") {
+      safe[key] = input[key];
+    }
+  }
+  for (const key of NULLABLE_TEXT_FIELDS) {
+    if (input[key] === null || typeof input[key] === "string") {
+      safe[key] = input[key];
+    }
+  }
+  for (const key of STRING_FIELDS) {
+    if (typeof input[key] === "string") {
+      safe[key] = input[key];
+    }
+  }
+  return safe;
+};
+
+app.disable("x-powered-by");
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader(
+    "Content-Security-Policy",
+    [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com https://cdnjs.cloudflare.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com data:",
+      "img-src 'self' data: blob:",
+      "connect-src 'self'",
+      "worker-src 'self' blob:",
+      "frame-src 'self' blob:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "frame-ancestors 'self'",
+      "form-action 'self'",
+    ].join("; ")
+  );
+  next();
+});
 app.use(express.json({ limit: "1mb" }));
 
 const ensureConfigDir = async () => {
@@ -33,13 +98,14 @@ const readConfig = async () => {
   try {
     const raw = await fs.readFile(CONFIG_PATH, "utf8");
     const parsed = JSON.parse(raw);
-    const merged = { ...DEFAULT_CONFIG, ...parsed };
+    const merged = sanitizeConfig(parsed) ?? { ...DEFAULT_CONFIG };
+    const legacy = parsed && typeof parsed === "object" ? parsed : {};
 
-    if (!merged.weekdayChoresText && parsed.choresText) {
-      merged.weekdayChoresText = parsed.choresText;
+    if (!merged.weekdayChoresText && typeof legacy.choresText === "string") {
+      merged.weekdayChoresText = legacy.choresText;
     }
-    if (!merged.weekendAlternatesText && parsed.saturdayChoresText) {
-      merged.weekendAlternatesText = parsed.saturdayChoresText;
+    if (!merged.weekendAlternatesText && typeof legacy.saturdayChoresText === "string") {
+      merged.weekendAlternatesText = legacy.saturdayChoresText;
     }
     return merged;
   } catch (error) {
@@ -52,8 +118,13 @@ const readConfig = async () => {
 };
 
 const writeConfig = async (config) => {
+  const safeConfig = sanitizeConfig(config);
+  if (!safeConfig) {
+    const error = new Error("Invalid configuration payload.");
+    error.statusCode = 400;
+    throw error;
+  }
   await ensureConfigDir();
-  const safeConfig = { ...DEFAULT_CONFIG, ...config };
   await fs.writeFile(CONFIG_PATH, JSON.stringify(safeConfig, null, 2), "utf8");
 };
 
@@ -67,15 +138,13 @@ app.get("/api/config", async (req, res) => {
 });
 
 app.post("/api/config", async (req, res) => {
-  const config = req.body;
-  if (!config || typeof config !== "object") {
-    return res.status(400).json({ error: "Invalid configuration payload." });
-  }
-
   try {
-    await writeConfig(config);
+    await writeConfig(req.body);
     res.status(204).end();
   } catch (error) {
+    if (error.statusCode === 400) {
+      return res.status(400).json({ error: "Invalid configuration payload." });
+    }
     console.error("Failed to write config:", error);
     res.status(500).json({ error: "Failed to save configuration." });
   }
